@@ -294,21 +294,44 @@ export function InterviewCard({
   );
 }
 
-export function CandidateProfilePanel() {
+export function CandidateProfilePanel({
+  name = "Ava Rodriguez",
+  title = "Senior Product Designer",
+  experience = "7 yrs experience",
+  match = 94,
+  strengths = ["Design systems", "B2B SaaS UX", "Research synthesis"],
+  missingSkills = ["A/B experimentation", "Accessibility audits"],
+  suggestions = ["Schedule portfolio review and product strategy interview with design leadership."],
+}: {
+  name?: string;
+  title?: string;
+  experience?: string;
+  match?: number;
+  strengths?: string[];
+  missingSkills?: string[];
+  suggestions?: string[];
+}) {
+  const initials = name
+    .split(" ")
+    .map((part) => part[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+
   return (
     <div className="rounded-[32px] border border-slate-200/80 bg-white/90 p-6 shadow-[0_30px_80px_-60px_rgba(2,6,23,0.8)] dark:border-slate-800 dark:bg-slate-900/80">
       <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-4">
-          <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-gradient-to-br from-violet-500 via-sky-500 to-cyan-400 text-xl font-semibold text-white">AR</div>
+          <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-gradient-to-br from-violet-500 via-sky-500 to-cyan-400 text-xl font-semibold text-white">{initials}</div>
           <div>
             <div className="text-[11px] uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">Candidate profile</div>
-            <h3 className="mt-1 text-2xl font-semibold text-slate-900 dark:text-white">Ava Rodriguez</h3>
-            <div className="text-sm text-slate-500 dark:text-slate-400">Senior Product Designer • 7 yrs experience</div>
+            <h3 className="mt-1 text-2xl font-semibold text-slate-900 dark:text-white">{name}</h3>
+            <div className="text-sm text-slate-500 dark:text-slate-400">{title} • {experience}</div>
           </div>
         </div>
         <div className="rounded-2xl bg-emerald-500/10 px-4 py-3 text-right">
           <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-600 dark:text-emerald-300">AI match</div>
-          <div className="text-4xl font-semibold text-emerald-600 dark:text-emerald-300">94%</div>
+          <div className="text-4xl font-semibold text-emerald-600 dark:text-emerald-300">{match}%</div>
         </div>
       </div>
 
@@ -316,21 +339,22 @@ export function CandidateProfilePanel() {
         <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950/50">
           <div className="mb-2 text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">Strengths</div>
           <ul className="space-y-2 text-sm text-slate-700 dark:text-slate-200">
-            <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-500" /> Design systems</li>
-            <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-500" /> B2B SaaS UX</li>
-            <li className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-500" /> Research synthesis</li>
+            {strengths.map((item) => (
+              <li key={item} className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-500" /> {item}</li>
+            ))}
           </ul>
         </div>
         <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950/50">
           <div className="mb-2 text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">Missing skills</div>
           <ul className="space-y-2 text-sm text-slate-700 dark:text-slate-200">
-            <li className="flex items-center gap-2"><Star className="h-4 w-4 text-amber-500" /> A/B experimentation</li>
-            <li className="flex items-center gap-2"><Star className="h-4 w-4 text-amber-500" /> Accessibility audits</li>
+            {missingSkills.length ? missingSkills.map((item) => (
+              <li key={item} className="flex items-center gap-2"><Star className="h-4 w-4 text-amber-500" /> {item}</li>
+            )) : <li className="text-slate-500 dark:text-slate-400">No key gaps detected.</li>}
           </ul>
         </div>
         <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950/50">
           <div className="mb-2 text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">Recommended next step</div>
-          <div className="text-sm text-slate-700 dark:text-slate-200">Schedule portfolio review and product strategy interview with design leadership.</div>
+          <div className="text-sm text-slate-700 dark:text-slate-200">{suggestions[0] || "Continue improving role-specific depth in your portfolio."}</div>
         </div>
       </div>
     </div>

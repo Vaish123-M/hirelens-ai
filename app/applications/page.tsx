@@ -1,7 +1,29 @@
+"use client";
+
 import { Plus, Search } from "lucide-react";
-import { ApplicationRow, PageShell, candidateApplications } from "@/components/hirelens";
+import { useEffect, useState } from "react";
+import { ApplicationRow, PageShell } from "@/components/hirelens";
 
 export default function ApplicationsPage() {
+  const [applications, setApplications] = useState<any[]>([]);
+  const [jobs, setJobs] = useState<any[]>([]);
+
+  useEffect(() => {
+    async function load() {
+      const [jobsResponse, appsResponse] = await Promise.all([
+        fetch("/api/jobs"),
+        fetch("/api/applications"),
+      ]);
+
+      const jobsData = jobsResponse.ok ? await jobsResponse.json() : { jobs: [] };
+      const appsData = appsResponse.ok ? await appsResponse.json() : { applications: [] };
+      setJobs(jobsData.jobs || []);
+      setApplications(appsData.applications || []);
+    }
+
+    load();
+  }, []);
+
   return (
     <PageShell
       role="candidate"
@@ -15,13 +37,15 @@ export default function ApplicationsPage() {
             <Search className="h-4 w-4 text-slate-400" />
             <input placeholder="Search applications" className="w-full bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none dark:text-white" />
           </div>
-          <div className="text-sm text-slate-500 dark:text-slate-400">3 active applications</div>
+          <div className="text-sm text-slate-500 dark:text-slate-400">{applications.length} active application{applications.length === 1 ? "" : "s"}</div>
         </div>
 
         <div className="space-y-3">
-          {candidateApplications.map((application) => (
-            <ApplicationRow key={application.position} {...application} />
-          ))}
+          {applications.length ? applications.map((application) => (
+            <ApplicationRow key={application.id} position={jobs.find((job) => job.id === application.jobId)?.title || "Role"} company={jobs.find((job) => job.id === application.jobId)?.company || "HireLens"} submitted={new Date(application.createdAt).toLocaleDateString()} status={application.status} match={`${application.score}%`} />
+          )) : (
+            <div className="rounded-2xl border border-dashed border-slate-300 p-4 text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400">No applications found yet.</div>
+          )}
         </div>
       </div>
     </PageShell>

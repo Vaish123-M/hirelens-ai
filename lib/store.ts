@@ -119,8 +119,33 @@ export const applications: Application[] = [
   },
 ];
 
+export type CandidateProfile = {
+  name: string;
+  title: string;
+  experience: string;
+  match: number;
+  strengths: string[];
+  missingSkills: string[];
+  suggestions: string[];
+  lastUpdated?: string;
+};
+
+export const candidateProfiles: Record<string, CandidateProfile> = {
+  "cand-1": {
+    name: "Ava Rodriguez",
+    title: "Senior Product Designer",
+    experience: "7 yrs experience",
+    match: 94,
+    strengths: ["Design systems", "B2B SaaS UX", "Research synthesis"],
+    missingSkills: ["A/B experimentation", "Accessibility audits"],
+    suggestions: ["Schedule portfolio review and product strategy interview with design leadership."],
+    lastUpdated: new Date().toISOString(),
+  },
+};
+
 export const seedStore = {
   users,
   jobs,
   applications,
+  candidateProfiles,
 };
