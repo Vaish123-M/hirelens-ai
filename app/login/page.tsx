@@ -1,11 +1,46 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowRight, BriefcaseBusiness, CircleUserRound, LockKeyhole, Mail, ShieldCheck } from "lucide-react";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [mode, setMode] = useState<"candidate" | "recruiter">("candidate");
+  const [email, setEmail] = useState(mode === "candidate" ? "ava@northstar.ai" : "olivia@hirelens.ai");
+  const [password, setPassword] = useState("password123");
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleModeChange = (nextMode: "candidate" | "recruiter") => {
+    setMode(nextMode);
+    setEmail(nextMode === "candidate" ? "ava@northstar.ai" : "olivia@hirelens.ai");
+    setPassword("password123");
+    setError("");
+  };
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setIsSubmitting(true);
+    setError("");
+
+    const response = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      setError(data.error || "Login failed");
+      setIsSubmitting(false);
+      return;
+    }
+
+    router.push(mode === "candidate" ? "/dashboard/candidate" : "/dashboard/recruiter");
+    router.refresh();
+  }
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,_#e0f2fe_0%,_#f8fafc_35%,_#f8fafc_100%)] px-6 py-12 dark:bg-[radial-gradient(circle_at_top,_#0f172a_0%,_#020817_40%,_#020817_100%)]">
@@ -54,26 +89,26 @@ export default function LoginPage() {
               <div className="mb-6 grid grid-cols-2 gap-2 rounded-2xl bg-slate-100 p-1 dark:bg-slate-900">
                 <button
                   type="button"
-                  onClick={() => setMode("candidate")}
+                  onClick={() => handleModeChange("candidate")}
                   className={`flex items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium transition ${mode === "candidate" ? "bg-white text-slate-900 shadow-sm dark:bg-slate-800 dark:text-white" : "text-slate-500 dark:text-slate-300"}`}
                 >
                   <CircleUserRound className="h-4 w-4" /> Candidate
                 </button>
                 <button
                   type="button"
-                  onClick={() => setMode("recruiter")}
+                  onClick={() => handleModeChange("recruiter")}
                   className={`flex items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium transition ${mode === "recruiter" ? "bg-white text-slate-900 shadow-sm dark:bg-slate-800 dark:text-white" : "text-slate-500 dark:text-slate-300"}`}
                 >
                   <BriefcaseBusiness className="h-4 w-4" /> Recruiter
                 </button>
               </div>
 
-              <form className="space-y-5">
+              <form onSubmit={handleSubmit} className="space-y-5">
                 <label className="block text-sm text-slate-600 dark:text-slate-300">
                   <span className="mb-2 block">Work email</span>
                   <div className="relative">
                     <Mail className="pointer-events-none absolute left-3 top-3.5 h-4 w-4 text-slate-400" />
-                    <input type="email" defaultValue={mode === "candidate" ? "ava@northstar.ai" : "olivia@hirelens.ai"} className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3 pl-10 pr-4 text-slate-900 outline-none ring-0 transition focus:border-sky-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100" />
+                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3 pl-10 pr-4 text-slate-900 outline-none ring-0 transition focus:border-sky-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100" />
                   </div>
                 </label>
 
@@ -81,7 +116,7 @@ export default function LoginPage() {
                   <span className="mb-2 block">Password</span>
                   <div className="relative">
                     <LockKeyhole className="pointer-events-none absolute left-3 top-3.5 h-4 w-4 text-slate-400" />
-                    <input type="password" defaultValue="password123" className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3 pl-10 pr-4 text-slate-900 outline-none ring-0 transition focus:border-sky-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100" />
+                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3 pl-10 pr-4 text-slate-900 outline-none ring-0 transition focus:border-sky-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100" />
                   </div>
                 </label>
 
@@ -93,9 +128,11 @@ export default function LoginPage() {
                   <a href="#" className="text-sky-600 dark:text-sky-300">Forgot password?</a>
                 </div>
 
-                <Link href={mode === "candidate" ? "/dashboard/candidate" : "/dashboard/recruiter"} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-slate-900 px-4 py-3.5 text-sm font-medium text-white transition hover:bg-slate-700 dark:bg-sky-500/15 dark:text-sky-100 dark:hover:bg-sky-500/20">
-                  Continue <ArrowRight className="h-4 w-4" />
-                </Link>
+                {error ? <div className="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-600 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-300">{error}</div> : null}
+
+                <button type="submit" disabled={isSubmitting} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-slate-900 px-4 py-3.5 text-sm font-medium text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-70 dark:bg-sky-500/15 dark:text-sky-100 dark:hover:bg-sky-500/20">
+                  {isSubmitting ? "Signing in..." : "Continue"} <ArrowRight className="h-4 w-4" />
+                </button>
               </form>
 
               <div className="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
