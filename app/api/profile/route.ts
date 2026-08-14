@@ -66,3 +66,28 @@ export async function POST(request: NextRequest) {
     applications: applications.filter((item) => item.candidateId === session.sub),
   });
 }
+
+export async function PUT(request: NextRequest) {
+  const session = getSessionFromRequest(request);
+  if (!session || session.role !== "candidate") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const body = await request.json();
+  const nextProfile = {
+    ...(candidateProfiles[session.sub] || {
+      name: session.name,
+      title: "Product professional",
+      experience: "Professional experience",
+      match: 88,
+      strengths: ["Communication", "Execution"],
+      missingSkills: ["Role-specific depth"],
+      suggestions: ["Add measurable business outcomes to your profile."],
+    }),
+    ...body,
+    lastUpdated: new Date().toISOString(),
+  };
+
+  candidateProfiles[session.sub] = nextProfile;
+  return NextResponse.json({ profile: nextProfile });
+}

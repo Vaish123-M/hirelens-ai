@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, Play, ShieldCheck, Sparkles, Star } from "lucide-react";
 import { BrandMark, homeFeatures, landingProof, workflowSteps } from "@/components/hirelens";

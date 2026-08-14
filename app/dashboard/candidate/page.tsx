@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowRight, Bell, BriefcaseBusiness, FileText, Search, Sparkles, UploadCloud } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { ApplicationRow, CandidateProfilePanel, MetricCard, PageShell } from "@/components/hirelens";
+import type { Application, Job } from "@/lib/store";
 
 const defaultProfile = {
   name: "Ava Rodriguez",
@@ -17,8 +18,8 @@ const defaultProfile = {
 
 export default function CandidateDashboardPage() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [jobs, setJobs] = useState<any[]>([]);
-  const [applications, setApplications] = useState<any[]>([]);
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [applications, setApplications] = useState<Application[]>([]);
   const [profile, setProfile] = useState(defaultProfile);
   const [uploading, setUploading] = useState(false);
   const [uploadMessage, setUploadMessage] = useState("");
@@ -42,7 +43,11 @@ export default function CandidateDashboardPage() {
   }
 
   useEffect(() => {
-    loadData();
+    const timeoutId = window.setTimeout(() => {
+      void loadData();
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
   }, []);
 
   async function handleResumeUpload(event: React.ChangeEvent<HTMLInputElement>) {

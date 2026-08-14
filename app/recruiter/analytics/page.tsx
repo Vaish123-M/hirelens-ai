@@ -1,3 +1,5 @@
+"use client";
+
 import { BarChart3, TrendingUp } from "lucide-react";
 import { MetricCard, PageShell, analyticsCards, fakeStats } from "@/components/hirelens";
 

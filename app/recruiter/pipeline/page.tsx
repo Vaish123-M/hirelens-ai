@@ -3,6 +3,7 @@
 import { ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { PageShell } from "@/components/hirelens";
+import type { Application } from "@/lib/store";
 
 const columns = [
   { title: "Applied", value: "Applied", accent: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200" },
@@ -13,7 +14,7 @@ const columns = [
 ];
 
 export default function PipelinePage() {
-  const [applications, setApplications] = useState<any[]>([]);
+  const [applications, setApplications] = useState<Application[]>([]);
 
   async function loadApplications() {
     const response = await fetch("/api/applications");
@@ -22,7 +23,11 @@ export default function PipelinePage() {
   }
 
   useEffect(() => {
-    loadApplications();
+    const timeoutId = window.setTimeout(() => {
+      void loadApplications();
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
   }, []);
 
   async function updateStatus(applicationId: string, status: string) {

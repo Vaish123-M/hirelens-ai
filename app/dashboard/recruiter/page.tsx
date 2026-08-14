@@ -1,3 +1,5 @@
+"use client";
+
 import { ArrowRight, BriefcaseBusiness, ChartColumnBig, FileText, Plus, Users } from "lucide-react";
 import Link from "next/link";
 import { MetricCard, PageShell, SectionHeader, fakeStats, pipelineColumns, recruiterCandidates, interviewSchedule } from "@/components/hirelens";

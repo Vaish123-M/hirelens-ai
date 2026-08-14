@@ -2,7 +2,8 @@
 
 import { Plus, Search } from "lucide-react";
 import { useEffect, useState } from "react";
-import { JobCard, PageShell } from "@/components/hirelens";
+import { PageShell } from "@/components/hirelens";
+import type { Job } from "@/lib/store";
 
 const emptyForm = {
   title: "",
@@ -15,7 +16,7 @@ const emptyForm = {
 };
 
 export default function RecruiterJobsPage() {
-  const [jobs, setJobs] = useState<any[]>([]);
+  const [jobs, setJobs] = useState<Job[]>([]);
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState("");
@@ -27,7 +28,11 @@ export default function RecruiterJobsPage() {
   }
 
   useEffect(() => {
-    loadJobs();
+    const timeoutId = window.setTimeout(() => {
+      void loadJobs();
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
   }, []);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {

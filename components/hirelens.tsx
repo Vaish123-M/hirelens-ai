@@ -1,4 +1,7 @@
+'use client';
+
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import {
   ArrowRight,
   BriefcaseBusiness,
@@ -19,7 +22,7 @@ import {
   Zap,
   type LucideIcon,
 } from "lucide-react";
-import type { ReactNode } from "react";
+import { type ReactNode, useState } from "react";
 
 export type NavRole = "candidate" | "recruiter";
 
@@ -163,18 +166,44 @@ export function PageShell({
   children: ReactNode;
   rightAction?: ReactNode;
 }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const [workspaceRole, setWorkspaceRole] = useState<NavRole>(role);
+
+  const switchRole = (nextRole: NavRole) => {
+    setWorkspaceRole(nextRole);
+    const target = nextRole === "candidate" ? "/dashboard/candidate" : "/dashboard/recruiter";
+    if (pathname !== target) {
+      router.push(target);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,_#e0f2fe_0%,_#f8fafc_35%,_#f8fafc_100%)] text-slate-900 dark:bg-[radial-gradient(circle_at_top,_#0f172a_0%,_#020817_40%,_#020817_100%)] dark:text-white">
       <div className="mx-auto flex min-h-screen max-w-[1600px]">
-        <SidebarNav role={role} />
+        <SidebarNav role={workspaceRole} />
         <main className="flex-1 p-4 sm:p-6 lg:p-8">
           <header className="mb-8 flex flex-col gap-4 rounded-[28px] border border-slate-200/80 bg-white/70 p-5 shadow-lg shadow-slate-200/20 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-950/40 dark:shadow-slate-950/20 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-sky-600 dark:text-sky-300">{role === "candidate" ? "Candidate workspace" : "Recruiter workspace"}</div>
+              <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-sky-600 dark:text-sky-300">{workspaceRole === "candidate" ? "Candidate workspace" : "Recruiter workspace"}</div>
               <h1 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">{title}</h1>
               {subtitle ? <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">{subtitle}</p> : null}
             </div>
-            {rightAction}
+            <div className="flex items-center gap-3">
+              <div className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white p-1 dark:border-slate-700 dark:bg-slate-900">
+                {(["candidate", "recruiter"] as const).map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => switchRole(option)}
+                    className={`rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] transition ${workspaceRole === option ? "bg-slate-900 text-white dark:bg-sky-500/15 dark:text-sky-100" : "text-slate-500 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"}`}
+                  >
+                    {option === "candidate" ? "Candidate" : "Recruiter"}
+                  </button>
+                ))}
+              </div>
+              {rightAction}
+            </div>
           </header>
           {children}
         </main>
@@ -192,6 +221,7 @@ export function JobCard({
   salary,
   match,
   skills,
+  onApply,
 }: {
   role: "candidate" | "recruiter";
   title: string;
@@ -201,6 +231,7 @@ export function JobCard({
   salary: string;
   match?: number;
   skills: string[];
+  onApply?: () => void;
 }) {
   return (
     <article className="rounded-3xl border border-slate-200/80 bg-white/85 p-5 shadow-[0_25px_60px_-45px_rgba(15,23,42,0.6)] backdrop-blur-xl transition hover:-translate-y-1 hover:shadow-xl dark:border-slate-800 dark:bg-slate-900/70">
@@ -227,9 +258,15 @@ export function JobCard({
       </div>
       <div className="flex items-center justify-between gap-4 border-t border-slate-200/80 pt-4 dark:border-slate-800">
         <div className="text-sm text-slate-500 dark:text-slate-400">{role === "candidate" ? "8 applicants this week" : "4 interviews scheduled"}</div>
-        <Link href={role === "candidate" ? "/jobs" : "/recruiter/jobs"} className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-3.5 py-2 text-sm font-medium text-white transition hover:bg-slate-700 dark:bg-sky-500/15 dark:text-sky-100 dark:hover:bg-sky-500/20">
-          View details <ChevronRight className="h-4 w-4" />
-        </Link>
+        {onApply ? (
+          <button type="button" onClick={onApply} className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-3.5 py-2 text-sm font-medium text-white transition hover:bg-slate-700 dark:bg-sky-500/15 dark:text-sky-100 dark:hover:bg-sky-500/20">
+            Apply now <ChevronRight className="h-4 w-4" />
+          </button>
+        ) : (
+          <Link href={role === "candidate" ? "/jobs" : "/recruiter/jobs"} className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-3.5 py-2 text-sm font-medium text-white transition hover:bg-slate-700 dark:bg-sky-500/15 dark:text-sky-100 dark:hover:bg-sky-500/20">
+            View details <ChevronRight className="h-4 w-4" />
+          </Link>
+        )}
       </div>
     </article>
   );
@@ -380,7 +417,7 @@ export const fakeStats = [
   { label: "Time to shortlist", value: "4.2d", delta: "-1.8d", icon: TrendingUp },
 ];
 
-export const landingProof = [
+export const landingProof: Array<{ label: string; value: string }> = [
   { label: "AI screening conversations", value: "12k+" },
   { label: "Hiring velocity uplift", value: "2.4x" },
   { label: "Average recruiter time saved", value: "11h/wk" },

@@ -4,15 +4,16 @@ import { Moon, SunMedium } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export function ThemeToggle() {
-  const [isDark, setIsDark] = useState(true);
-
-  useEffect(() => {
+  const [isDark, setIsDark] = useState<boolean>(() => {
+    if (typeof window === "undefined") return true;
     const stored = window.localStorage.getItem("hirelens-theme");
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const nextDark = stored ? stored === "dark" : prefersDark;
-    setIsDark(nextDark);
-    document.documentElement.classList.toggle("dark", nextDark);
-  }, []);
+    return stored ? stored === "dark" : prefersDark;
+  });
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", isDark);
+  }, [isDark]);
 
   const toggleTheme = () => {
     const nextDark = !isDark;
