@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowRight, Bell, BriefcaseBusiness, FileText, Search, Sparkles, UploadCloud } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { ApplicationRow, CandidateProfilePanel, MetricCard, PageShell } from "@/components/hirelens";
@@ -17,12 +18,19 @@ const defaultProfile = {
 };
 
 export default function CandidateDashboardPage() {
+  const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [jobs, setJobs] = useState<Job[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
   const [profile, setProfile] = useState(defaultProfile);
   const [uploading, setUploading] = useState(false);
   const [uploadMessage, setUploadMessage] = useState("");
+  const [showNotifications, setShowNotifications] = useState(false);
+  const notifications = [
+    { id: "n-1", title: "Interview reminder", detail: "Senior Product Designer panel starts today at 2:00 PM.", href: "/applications" },
+    { id: "n-2", title: "Resume refreshed", detail: "AI profile re-ranked your portfolio at 95% fit.", href: "/profile" },
+    { id: "n-3", title: "New role alert", detail: "3 design roles match your background this week.", href: "/jobs" },
+  ];
 
   async function loadData() {
     const [jobsResponse, applicationsResponse, profileResponse] = await Promise.all([
@@ -108,10 +116,38 @@ export default function CandidateDashboardPage() {
       title="Your talent dashboard"
       subtitle="Track applications, resume fit, interviews, and next best opportunities."
       rightAction={
-        <div className="flex items-center gap-3">
-          <button className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">
+        <div className="relative flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setShowNotifications((current) => !current)}
+            className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+          >
             <Bell className="h-4 w-4" /> 3 updates
           </button>
+          {showNotifications ? (
+            <div className="absolute right-0 top-14 z-20 w-80 rounded-[24px] border border-slate-200 bg-white p-3 shadow-xl dark:border-slate-700 dark:bg-slate-900">
+              <div className="mb-2 flex items-center justify-between px-2">
+                <div className="text-sm font-semibold text-slate-900 dark:text-white">Notifications</div>
+                <button type="button" onClick={() => setShowNotifications(false)} className="text-xs text-slate-500 dark:text-slate-300">Close</button>
+              </div>
+              <div className="space-y-2">
+                {notifications.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => {
+                      setShowNotifications(false);
+                      router.push(item.href);
+                    }}
+                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-3 text-left transition hover:border-sky-200 hover:bg-sky-50 dark:border-slate-700 dark:bg-slate-950/50 dark:hover:border-sky-500/40 dark:hover:bg-sky-500/5"
+                  >
+                    <div className="text-sm font-medium text-slate-900 dark:text-white">{item.title}</div>
+                    <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">{item.detail}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : null}
           <input ref={fileInputRef} type="file" accept=".pdf,.doc,.docx" className="hidden" onChange={handleResumeUpload} />
           <button type="button" onClick={() => fileInputRef.current?.click()} className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-3.5 py-2 text-sm font-medium text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-70 dark:bg-sky-500/15 dark:text-sky-100 dark:hover:bg-sky-500/20" disabled={uploading}>
             <UploadCloud className="h-4 w-4" /> {uploading ? "Uploading..." : "Upload resume"}
