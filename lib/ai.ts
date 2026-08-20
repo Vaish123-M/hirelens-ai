@@ -1,6 +1,6 @@
 import mammoth from "mammoth";
 import { PDFParse } from "pdf-parse";
-import { Job } from "@/lib/store";
+import { IJob } from "@/models";
 
 export async function extractResumeText(file: File) {
   const buffer = Buffer.from(await file.arrayBuffer());
@@ -25,7 +25,7 @@ export async function extractResumeText(file: File) {
   }
 }
 
-export async function generateAIAnalysis(resumeText: string, job: Job) {
+export async function generateAIAnalysis(resumeText: string, job: IJob) {
   const apiKey = process.env.OPENAI_API_KEY;
 
   if (apiKey) {

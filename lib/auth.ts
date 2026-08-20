@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { NextRequest } from "next/server";
-import { User } from "@/lib/store";
+import { IUser, UserRole } from "@/models";
 
 export const SESSION_COOKIE = "hirelens_session";
 
@@ -8,10 +8,10 @@ export function getJwtSecret() {
   return process.env.JWT_SECRET || "hirelens-demo-secret-key";
 }
 
-export function signToken(user: Pick<User, "id" | "email" | "role" | "name">) {
+export function signToken(user: Pick<IUser, "_id" | "email" | "role" | "name">) {
   return jwt.sign(
     {
-      sub: user.id,
+      sub: user._id.toString(),
       email: user.email,
       role: user.role,
       name: user.name,
@@ -25,7 +25,7 @@ export function verifyToken(token: string) {
   return jwt.verify(token, getJwtSecret()) as {
     sub: string;
     email: string;
-    role: User["role"];
+    role: UserRole;
     name: string;
   };
 }

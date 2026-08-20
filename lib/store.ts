@@ -1,3 +1,7 @@
+// Legacy types for backward compatibility
+// These are now replaced by Mongoose models in the models/ directory
+// Kept here for any remaining frontend references
+
 export type UserRole = "candidate" | "recruiter";
 export type JobStatus = "Open" | "Closed";
 export type ApplicationStatus = "Applied" | "Shortlisted" | "Interview" | "Offer" | "Hired" | "Rejected";
@@ -39,86 +43,6 @@ export type Application = {
   createdAt: string;
 };
 
-export const users: User[] = [
-  {
-    id: "cand-1",
-    name: "Ava Rodriguez",
-    email: "ava@northstar.ai",
-    password: "password123",
-    role: "candidate",
-  },
-  {
-    id: "rec-1",
-    name: "Olivia Chen",
-    email: "olivia@hirelens.ai",
-    password: "password123",
-    role: "recruiter",
-  },
-];
-
-export const jobs: Job[] = [
-  {
-    id: "job-1",
-    title: "Senior Product Designer",
-    company: "Northstar Labs",
-    location: "Remote • US",
-    type: "Full-time",
-    salary: "$140k - $170k",
-    description:
-      "Lead UX strategy for B2B SaaS growth products with a strong focus on research, design systems, and cross-functional product delivery.",
-    requirements: ["UX Research", "Figma", "Design Systems", "Product Strategy", "B2B SaaS", "User Interviews"],
-    status: "Open",
-    recruiterId: "rec-1",
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: "job-2",
-    title: "Senior Frontend Engineer",
-    company: "Runway Cloud",
-    location: "New York, NY",
-    type: "Full-time",
-    salary: "$160k - $195k",
-    description:
-      "Build modern frontend architecture for AI workflows, performance optimization, and highly scalable interfaces.",
-    requirements: ["React", "TypeScript", "Performance", "GraphQL", "Testing", "UI Architecture"],
-    status: "Open",
-    recruiterId: "rec-1",
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: "job-3",
-    title: "Revenue Operations Manager",
-    company: "Metric Forge",
-    location: "Austin, TX",
-    type: "Hybrid",
-    salary: "$120k - $148k",
-    description:
-      "Own forecasting, pipeline reporting, and sales process optimization across the GTM team.",
-    requirements: ["Sales Operations", "CRM", "Forecasting", "Excel", "Pipeline Reporting", "Process Design"],
-    status: "Open",
-    recruiterId: "rec-1",
-    createdAt: new Date().toISOString(),
-  },
-];
-
-export const applications: Application[] = [
-  {
-    id: "app-1",
-    jobId: "job-1",
-    candidateId: "cand-1",
-    candidateName: "Ava Rodriguez",
-    email: "ava@northstar.ai",
-    resumeText:
-      "Senior Product Designer with 7 years of experience in B2B SaaS, UX research, design systems, product strategy, and user interviews.",
-    score: 94,
-    strengths: ["UX Research", "Design Systems", "B2B SaaS"],
-    missingSkills: ["A/B Experimentation", "Accessibility Audits"],
-    suggestions: ["Strengthen quantitative product storytelling.", "Highlight accessibility and experimentation work."],
-    status: "Shortlisted",
-    createdAt: new Date().toISOString(),
-  },
-];
-
 export type CandidateProfile = {
   name: string;
   title: string;
@@ -130,18 +54,12 @@ export type CandidateProfile = {
   lastUpdated?: string;
 };
 
-export const candidateProfiles: Record<string, CandidateProfile> = {
-  "cand-1": {
-    name: "Ava Rodriguez",
-    title: "Senior Product Designer",
-    experience: "7 yrs experience",
-    match: 94,
-    strengths: ["Design systems", "B2B SaaS UX", "Research synthesis"],
-    missingSkills: ["A/B experimentation", "Accessibility audits"],
-    suggestions: ["Schedule portfolio review and product strategy interview with design leadership."],
-    lastUpdated: new Date().toISOString(),
-  },
-};
+// Empty arrays for backward compatibility
+// Data is now stored in MongoDB
+export const users: User[] = [];
+export const jobs: Job[] = [];
+export const applications: Application[] = [];
+export const candidateProfiles: Record<string, CandidateProfile> = {};
 
 export const seedStore = {
   users,
