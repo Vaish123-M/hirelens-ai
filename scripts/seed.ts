@@ -87,6 +87,7 @@ async function seed() {
         email: 'ava@northstar.ai',
         password: passwordHash,
         role: 'candidate',
+        isEmailVerified: true,
         profile: {
           title: 'Senior Product Designer',
           phone: '+1-555-0101',
@@ -130,6 +131,7 @@ async function seed() {
         password: passwordHash,
         role: 'recruiter',
         companyId: companies[0]._id,
+        isEmailVerified: true,
         profile: {
           title: 'Senior Technical Recruiter',
           phone: '+1-555-0102',
@@ -143,9 +145,32 @@ async function seed() {
         email: 'admin@hirelens.ai',
         password: passwordHash,
         role: 'admin',
+        isEmailVerified: true,
         profile: {
           title: 'System Administrator',
           bio: 'Platform administrator with full system access.',
+        },
+      },
+      {
+        name: 'Moderator User',
+        email: 'moderator@hirelens.ai',
+        password: passwordHash,
+        role: 'moderator',
+        isEmailVerified: true,
+        profile: {
+          title: 'Content Moderator',
+          bio: 'Platform moderator with content management access.',
+        },
+      },
+      {
+        name: 'Super Admin',
+        email: 'superadmin@hirelens.ai',
+        password: passwordHash,
+        role: 'superadmin',
+        isEmailVerified: true,
+        profile: {
+          title: 'Super Administrator',
+          bio: 'Platform super administrator with full system access.',
         },
       },
     ]);
@@ -461,6 +486,8 @@ async function seed() {
     console.log('Candidate: ava@northstar.ai / password123');
     console.log('Recruiter: olivia@hirelens.ai / password123');
     console.log('Admin: admin@hirelens.ai / password123');
+    console.log('Moderator: moderator@hirelens.ai / password123');
+    console.log('Super Admin: superadmin@hirelens.ai / password123');
 
   } catch (error) {
     console.error('Error seeding database:', error);
