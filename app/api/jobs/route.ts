@@ -137,8 +137,8 @@ export async function PUT(request: NextRequest) {
     // Track changes for audit log
     const changes: Record<string, { old: any; new: any }> = {};
     for (const key in rest) {
-      if (job[key] !== undefined && job[key] !== rest[key]) {
-        changes[key] = { old: job[key], new: rest[key] };
+      if ((job as any)[key] !== undefined && (job as any)[key] !== rest[key]) {
+        changes[key] = { old: (job as any)[key], new: rest[key] };
       }
     }
 

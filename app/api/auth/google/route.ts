@@ -105,7 +105,10 @@ export async function POST(request: NextRequest) {
       // Update Google tokens
       user.oauthProviders = {
         google: {
-          ...user.oauthProviders?.google,
+          id: user.oauthProviders?.google?.id || googleUser.id,
+          email: user.oauthProviders?.google?.email || googleUser.email,
+          name: user.oauthProviders?.google?.name || googleUser.name,
+          avatar: user.oauthProviders?.google?.avatar || googleUser.picture,
           accessToken: tokens.access_token,
           refreshToken: tokens.refresh_token,
         },

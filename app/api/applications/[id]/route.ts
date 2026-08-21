@@ -22,7 +22,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     }
 
     // Check if recruiter owns this application
-    if (application.recruiterId.toString() !== session.sub) {
+    if (application.recruiterId?.toString() !== session.sub) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
@@ -33,7 +33,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     // Add to status history
     application.statusHistory.push({
       status,
-      changedBy: session.sub,
+      changedBy: session.sub as any,
       changedAt: new Date(),
       notes,
     });

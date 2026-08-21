@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
         mimeType: resume.type,
       },
       resumeText,
-      coverLetter,
+      coverLetter: coverLetter || undefined,
       aiAnalysis: {
         score: analysis.score,
         strengths: analysis.strengths,
@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
       userId: session.sub,
       action: 'create',
       entity: 'application',
-      entityId: newApplication._id,
+      entityId: newApplication._id as any,
       details: {
         ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown',
         userAgent: request.headers.get('user-agent') || 'unknown',
@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    const populatedApplication = await Application.findById(newApplication._id)
+    const populatedApplication = await Application.findById(newApplication._id as any)
       .populate('jobId')
       .populate('candidateId', 'name email')
       .populate('recruiterId', 'name email');

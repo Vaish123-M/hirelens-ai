@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 
-export type AuditAction = 'create' | 'read' | 'update' | 'delete' | 'login' | 'logout' | 'export' | 'import';
+export type AuditAction = 'create' | 'read' | 'update' | 'delete' | 'login' | 'logout' | 'export' | 'import' | 'register' | 'password_reset' | 'email_verified' | 'oauth_login';
 export type AuditEntity = 'user' | 'company' | 'job' | 'application' | 'interview' | 'feedback' | 'assessment' | 'offer' | 'notification' | 'settings';
 
 export interface IAuditLog extends Document {
