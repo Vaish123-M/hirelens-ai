@@ -226,7 +226,7 @@ curl -X POST http://localhost:3000/api/register \
 # Test successful login
 curl -X POST http://localhost:3000/api/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"ava@northstar.ai","password":"password123"}'
+  -d '{"email":"ava@northstar.ai","password":"YOUR_SEED_PASSWORD"}'
 
 # Test invalid credentials
 curl -X POST http://localhost:3000/api/login \
@@ -374,15 +374,7 @@ EMAIL_FROM=noreply@hirelens.ai
 
 ## Seed Accounts
 
-After running `npm run seed`, use these accounts for testing:
-
-| Role | Email | Password | Verified |
-|------|-------|----------|----------|
-| Candidate | ava@northstar.ai | password123 | Yes |
-| Recruiter | olivia@hirelens.ai | password123 | Yes |
-| Admin | admin@hirelens.ai | password123 | Yes |
-| Moderator | moderator@hirelens.ai | password123 | Yes |
-| Super Admin | superadmin@hirelens.ai | password123 | Yes |
+Set `SEED_PASSWORD` in `.env.local` before running `npm run seed`. The generated seed accounts use that password; the script does not contain a default credential and is disabled when `NODE_ENV=production`.
 
 ## Troubleshooting
 

@@ -9,14 +9,14 @@ export default function LoginPage() {
   const router = useRouter();
   const [mode, setMode] = useState<"candidate" | "recruiter">("candidate");
   const [email, setEmail] = useState(mode === "candidate" ? "ava@northstar.ai" : "olivia@hirelens.ai");
-  const [password, setPassword] = useState("password123");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleModeChange = (nextMode: "candidate" | "recruiter") => {
     setMode(nextMode);
     setEmail(nextMode === "candidate" ? "ava@northstar.ai" : "olivia@hirelens.ai");
-    setPassword("password123");
+    setPassword("");
     setError("");
   };
 

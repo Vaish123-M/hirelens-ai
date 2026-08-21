@@ -4,6 +4,7 @@ import connectDB from "@/lib/mongodb";
 import { Job, Company, User } from "@/models";
 import { AuditLog } from "@/models";
 import { logger } from "@/lib/logger";
+import { isSameOrigin } from "@/lib/config";
 
 export async function GET(request: NextRequest) {
   try {
@@ -33,6 +34,10 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    if (!isSameOrigin(request)) {
+      return NextResponse.json({ error: "Invalid request origin" }, { status: 403 });
+    }
+
     await connectDB();
     const session = getSessionFromRequest(request);
     
@@ -116,6 +121,10 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
+    if (!isSameOrigin(request)) {
+      return NextResponse.json({ error: "Invalid request origin" }, { status: 403 });
+    }
+
     await connectDB();
     const session = getSessionFromRequest(request);
     
@@ -123,7 +132,8 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { id, ...rest } = await request.json();
+    const body = await request.json();
+    const { id } = body;
     
     const job = await Job.findById(id);
     if (!job) {
@@ -137,13 +147,13 @@ export async function PUT(request: NextRequest) {
 
     // Track changes for audit log
     const changes: Record<string, { old: any; new: any }> = {};
-    for (const key in rest) {
-      if ((job as any)[key] !== undefined && (job as any)[key] !== rest[key]) {
-        changes[key] = { old: (job as any)[key], new: rest[key] };
+    const editableFields = ['title', 'description', 'requirements', 'responsibilities', 'benefits', 'location', 'type', 'workMode', 'department', 'experienceLevel', 'skills', 'status', 'settings', 'salary'] as const;
+    for (const key of editableFields) {
+      if (body[key] !== undefined && (job as any)[key] !== body[key]) {
+        changes[key] = { old: (job as any)[key], new: body[key] };
+        (job as any)[key] = body[key];
       }
     }
-
-    Object.assign(job, rest);
     await job.save();
 
     // Create audit log if there were changes
@@ -167,7 +177,7 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json({ job: populatedJob });
   } catch (error) {
-    console.error('Update job error:', error);
+    logger.error('Update job error:', error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

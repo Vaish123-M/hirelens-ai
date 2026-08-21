@@ -25,7 +25,7 @@ const AuditLogSchema = new Schema<IAuditLog>(
     },
     action: {
       type: String,
-      enum: ['create', 'read', 'update', 'delete', 'login', 'logout', 'export', 'import'],
+      enum: ['create', 'read', 'update', 'delete', 'login', 'logout', 'export', 'import', 'register', 'password_reset', 'email_verified', 'oauth_login'],
       required: [true, 'Action is required'],
     },
     entity: {

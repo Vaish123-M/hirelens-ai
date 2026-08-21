@@ -6,9 +6,14 @@ import { extractResumeText, generateAIAnalysis } from "@/lib/ai";
 import { AuditLog } from "@/models";
 import { randomUUID } from 'crypto';
 import { logger } from "@/lib/logger";
+import { isSameOrigin } from "@/lib/config";
 
 export async function POST(request: NextRequest) {
   try {
+    if (!isSameOrigin(request)) {
+      return NextResponse.json({ error: "Invalid request origin" }, { status: 403 });
+    }
+
     await connectDB();
     const session = getSessionFromRequest(request);
 

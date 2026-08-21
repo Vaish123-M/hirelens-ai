@@ -4,9 +4,14 @@ import { User } from "@/models";
 import { logAuthEvent } from "@/lib/auth";
 import { emailVerificationRateLimit } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
+import { isSameOrigin } from "@/lib/config";
 
 export async function POST(request: NextRequest) {
   try {
+    if (!isSameOrigin(request)) {
+      return NextResponse.json({ error: "Invalid request origin" }, { status: 403 });
+    }
+
     // Apply rate limiting
     const rateLimitResponse = await emailVerificationRateLimit(request);
     if (rateLimitResponse && rateLimitResponse.status === 429) {

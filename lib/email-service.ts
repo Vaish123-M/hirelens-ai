@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
 import { logger } from './logger';
+import { getAppUrl } from './config';
 
 interface EmailOptions {
   to: string;
@@ -72,7 +73,7 @@ export async function sendEmail(options: EmailOptions): Promise<boolean> {
 }
 
 export async function sendVerificationEmail(email: string, name: string, token: string): Promise<boolean> {
-  const verificationUrl = `${process.env.NEXT_PUBLIC_APP_URL}/verify-email?token=${token}`;
+  const verificationUrl = `${getAppUrl()}/verify-email?token=${encodeURIComponent(token)}`;
   
   const html = `
     <!DOCTYPE html>
@@ -132,7 +133,7 @@ export async function sendVerificationEmail(email: string, name: string, token: 
 }
 
 export async function sendPasswordResetEmail(email: string, name: string, token: string): Promise<boolean> {
-  const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL}/reset-password?token=${token}`;
+  const resetUrl = `${getAppUrl()}/reset-password?token=${encodeURIComponent(token)}`;
   
   const html = `
     <!DOCTYPE html>

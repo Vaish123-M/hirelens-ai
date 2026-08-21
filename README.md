@@ -29,11 +29,13 @@ HireLens AI is a modern AI-powered recruitment platform that helps recruiters ma
    npm install
    ```
 
-2. Create a `.env.local` file in the project root:
+2. Create a `.env.local` file in the project root using `.env.example` as a template. At minimum, set:
 
    ```bash
-   JWT_SECRET=your-super-secret-key
-   OPENAI_API_KEY=your_openai_key_here
+   JWT_SECRET=generate-a-random-value-at-least-32-characters
+   JWT_REFRESH_SECRET=generate-another-random-value-at-least-32-characters
+   MONGODB_URI=mongodb://localhost:27017/hirelens-ai
+   NEXT_PUBLIC_APP_URL=http://localhost:3000
    ```
 
 3. Run the app:
@@ -46,10 +48,9 @@ HireLens AI is a modern AI-powered recruitment platform that helps recruiters ma
 
 ## Seed accounts
 
-The app includes demo credentials for local testing:
+For local testing, set `SEED_PASSWORD` in `.env.local` and run `npm run seed`. The script is disabled in production and does not contain a default password.
 
-- Candidate: ava@northstar.ai / password123
-- Recruiter: olivia@hirelens.ai / password123
+The seed accounts use the configured `SEED_PASSWORD`.
 
 ## Demo flow
 
@@ -84,13 +85,12 @@ The app includes demo credentials for local testing:
 4. Set the start command:
 
    ```bash
-   npm run start
+   node .next/standalone/server.js
    ```
 
-5. Add environment variables for `JWT_SECRET` and `OPENAI_API_KEY`.
+5. Add the runtime environment variables listed in `.env.example`, including `MONGODB_URI`, `JWT_REFRESH_SECRET`, `NEXT_PUBLIC_APP_URL`, and email settings.
 
 ## Notes
 
-- The current MVP uses an in-memory store for demo data.
-- For production, replace this with a database such as PostgreSQL or Prisma.
+- MongoDB is required at runtime for API routes.
 - The AI engine uses OpenAI-compatible API when configured; otherwise it falls back to a deterministic heuristic scoring model.

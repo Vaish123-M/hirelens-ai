@@ -1,11 +1,5 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/hirelens-ai';
-
-if (!MONGODB_URI) {
-  throw new Error('Please define the MONGODB_URI environment variable');
-}
-
 interface MongooseCache {
   conn: typeof mongoose | null;
   promise: Promise<typeof mongoose> | null;
@@ -22,6 +16,11 @@ if (!global.mongoose) {
 }
 
 async function connectDB() {
+  const mongodbUri = process.env.MONGODB_URI;
+  if (!mongodbUri) {
+    throw new Error('MONGODB_URI environment variable is required');
+  }
+
   if (cached.conn) {
     return cached.conn;
   }
@@ -31,7 +30,7 @@ async function connectDB() {
       bufferCommands: false,
     };
 
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
+    cached.promise = mongoose.connect(mongodbUri, opts).then((mongoose) => {
       return mongoose;
     });
   }

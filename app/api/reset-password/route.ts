@@ -4,9 +4,20 @@ import { User } from "@/models";
 import { logAuthEvent } from "@/lib/auth";
 import { validatePasswordStrength } from "@/lib/auth-utils";
 import { logger } from "@/lib/logger";
+import { isSameOrigin } from "@/lib/config";
+import { passwordResetRateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
   try {
+    if (!isSameOrigin(request)) {
+      return NextResponse.json({ error: "Invalid request origin" }, { status: 403 });
+    }
+
+    const rateLimitResponse = await passwordResetRateLimit(request);
+    if (rateLimitResponse.status === 429) {
+      return rateLimitResponse;
+    }
+
     await connectDB();
     const { token, password } = await request.json();
 

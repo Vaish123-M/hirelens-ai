@@ -10,11 +10,19 @@ export const SESSION_COOKIE = "hirelens_session";
 export const REFRESH_COOKIE = "hirelens_refresh";
 
 export function getJwtSecret() {
-  return process.env.JWT_SECRET || "hirelens-demo-secret-key";
+  const secret = process.env.JWT_SECRET;
+  if (!secret || secret.length < 32) {
+    throw new Error("JWT_SECRET must be set and contain at least 32 characters");
+  }
+  return secret;
 }
 
 export function getRefreshSecret() {
-  return process.env.JWT_REFRESH_SECRET || "hirelens-demo-refresh-secret-key";
+  const secret = process.env.JWT_REFRESH_SECRET;
+  if (!secret || secret.length < 32) {
+    throw new Error("JWT_REFRESH_SECRET must be set and contain at least 32 characters");
+  }
+  return secret;
 }
 
 export function signToken(user: Pick<IUser, "_id" | "email" | "role" | "name">) {

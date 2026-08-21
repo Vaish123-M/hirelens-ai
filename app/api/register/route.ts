@@ -6,9 +6,14 @@ import { authRateLimit } from "@/lib/rate-limit";
 import { isValidEmail, validatePasswordStrength, generateEmailVerificationToken } from "@/lib/auth-utils";
 import { sendVerificationEmail } from "@/lib/email-service";
 import { logger } from "@/lib/logger";
+import { isSameOrigin } from "@/lib/config";
 
 export async function POST(request: NextRequest) {
   try {
+    if (!isSameOrigin(request)) {
+      return NextResponse.json({ error: "Invalid request origin" }, { status: 403 });
+    }
+
     // Apply rate limiting
     const rateLimitResponse = await authRateLimit(request);
     if (rateLimitResponse && rateLimitResponse.status === 429) {
@@ -16,7 +21,7 @@ export async function POST(request: NextRequest) {
     }
 
     await connectDB();
-    const { name, email, password, role } = await request.json();
+    const { name, email, password } = await request.json();
 
     // Validate input
     if (!name || !email || !password) {
@@ -49,7 +54,7 @@ export async function POST(request: NextRequest) {
       name: name.trim(),
       email: email.toLowerCase().trim(),
       password,
-      role: role || 'candidate',
+      role: 'candidate',
       isEmailVerified: false,
       emailVerificationToken: token,
       emailVerificationExpires: expires,

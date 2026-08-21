@@ -3,6 +3,7 @@ import { getSessionFromRequest } from "@/lib/auth";
 import connectDB from "@/lib/mongodb";
 import { User, Application, Job } from "@/models";
 import { extractResumeText, generateAIAnalysis } from "@/lib/ai";
+import { isSameOrigin } from "@/lib/config";
 
 export async function GET(request: NextRequest) {
   try {
@@ -49,6 +50,10 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    if (!isSameOrigin(request)) {
+      return NextResponse.json({ error: "Invalid request origin" }, { status: 403 });
+    }
+
     await connectDB();
     const session = getSessionFromRequest(request);
 
@@ -63,7 +68,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Resume file is required" }, { status: 400 });
     }
 
-    if (!file.name.match(/\.(pdf|doc|docx)$/i)) {
+    if (!file.name.match(/\.(pdf|docx)$/i)) {
       return NextResponse.json({ error: "Only PDF or DOCX resumes are supported" }, { status: 400 });
     }
 
@@ -120,6 +125,10 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
+    if (!isSameOrigin(request)) {
+      return NextResponse.json({ error: "Invalid request origin" }, { status: 403 });
+    }
+
     await connectDB();
     const session = getSessionFromRequest(request);
 

@@ -6,9 +6,14 @@ import { passwordResetRateLimit } from "@/lib/rate-limit";
 import { generatePasswordResetToken, isValidEmail } from "@/lib/auth-utils";
 import { sendPasswordResetEmail } from "@/lib/email-service";
 import { logger } from "@/lib/logger";
+import { isSameOrigin } from "@/lib/config";
 
 export async function POST(request: NextRequest) {
   try {
+    if (!isSameOrigin(request)) {
+      return NextResponse.json({ error: "Invalid request origin" }, { status: 403 });
+    }
+
     // Apply rate limiting
     const rateLimitResponse = await passwordResetRateLimit(request);
     if (rateLimitResponse && rateLimitResponse.status === 429) {

@@ -27,22 +27,18 @@ const nextConfig: NextConfig = {
             value: 'nosniff'
           },
           {
-            key: 'X-XSS-Protection',
-            value: '1; mode=block'
-          },
-          {
             key: 'Referrer-Policy',
             value: 'origin-when-cross-origin'
+          },
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=()'
           },
         ],
       },
     ];
   },
   
-  // Environment-specific development origins
-  allowedDevOrigins: process.env.NODE_ENV === 'development' 
-    ? ['10.43.31.179', 'localhost', '127.0.0.1']
-    : [],
 };
 
 export default nextConfig;

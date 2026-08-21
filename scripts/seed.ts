@@ -16,6 +16,15 @@ import {
 
 async function seed() {
   try {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('The seed script cannot run in production');
+    }
+
+    const seedPassword = process.env.SEED_PASSWORD;
+    if (!seedPassword) {
+      throw new Error('SEED_PASSWORD environment variable is required');
+    }
+
     await connectDB();
     console.log('Connected to MongoDB');
 
@@ -34,7 +43,7 @@ async function seed() {
     console.log('Existing data cleared');
 
     // Hash passwords
-    const passwordHash = await bcrypt.hash('password123', 10);
+    const passwordHash = await bcrypt.hash(seedPassword, 12);
 
     // Create Companies
     console.log('Creating companies...');
@@ -483,11 +492,7 @@ async function seed() {
 
     console.log('Seed data created successfully!');
     console.log('\nSeed accounts:');
-    console.log('Candidate: ava@northstar.ai / password123');
-    console.log('Recruiter: olivia@hirelens.ai / password123');
-    console.log('Admin: admin@hirelens.ai / password123');
-    console.log('Moderator: moderator@hirelens.ai / password123');
-    console.log('Super Admin: superadmin@hirelens.ai / password123');
+    console.log('Seed accounts created. Use the configured SEED_PASSWORD to sign in.');
 
   } catch (error) {
     console.error('Error seeding database:', error);

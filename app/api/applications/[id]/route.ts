@@ -4,9 +4,14 @@ import connectDB from "@/lib/mongodb";
 import { Application } from "@/models";
 import { AuditLog } from "@/models";
 import { logger } from "@/lib/logger";
+import { isSameOrigin } from "@/lib/config";
 
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    if (!isSameOrigin(request)) {
+      return NextResponse.json({ error: "Invalid request origin" }, { status: 403 });
+    }
+
     await connectDB();
     const session = getSessionFromRequest(request);
     

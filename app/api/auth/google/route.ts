@@ -4,10 +4,14 @@ import connectDB from "@/lib/mongodb";
 import { User } from "@/models";
 import { generateSecureToken } from "@/lib/auth-utils";
 import { logger } from "@/lib/logger";
+import { getAppUrl, isSameOrigin } from "@/lib/config";
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
-const GOOGLE_REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI || `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/google/callback`;
+
+function getGoogleRedirectUri() {
+  return process.env.GOOGLE_REDIRECT_URI || `${getAppUrl()}/api/auth/google/callback`;
+}
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -18,9 +22,10 @@ export async function GET(request: NextRequest) {
   }
 
   const state = generateSecureToken();
+  const googleRedirectUri = getGoogleRedirectUri();
   const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
     `client_id=${GOOGLE_CLIENT_ID}&` +
-    `redirect_uri=${encodeURIComponent(GOOGLE_REDIRECT_URI)}&` +
+    `redirect_uri=${encodeURIComponent(googleRedirectUri)}&` +
     `response_type=code&` +
     `scope=openid email profile&` +
     `state=${state}&` +
@@ -61,6 +66,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Google OAuth not configured" }, { status: 500 });
     }
 
+    const googleRedirectUri = getGoogleRedirectUri();
+
     // Exchange code for tokens
     const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
       method: 'POST',
@@ -71,7 +78,7 @@ export async function POST(request: NextRequest) {
         code,
         client_id: GOOGLE_CLIENT_ID,
         client_secret: GOOGLE_CLIENT_SECRET,
-        redirect_uri: GOOGLE_REDIRECT_URI,
+        redirect_uri: googleRedirectUri,
         grant_type: 'authorization_code',
       }),
     });
