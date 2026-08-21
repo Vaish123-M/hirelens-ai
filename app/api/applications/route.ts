@@ -5,6 +5,7 @@ import { Application, Job, User } from "@/models";
 import { extractResumeText, generateAIAnalysis } from "@/lib/ai";
 import { AuditLog } from "@/models";
 import { randomUUID } from 'crypto';
+import { logger } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   try {
@@ -101,7 +102,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ application: populatedApplication }, { status: 201 });
   } catch (error: any) {
-    console.error('Create application error:', error);
+    logger.error('Create application error:', error);
     if (error.code === 11000) {
       return NextResponse.json({ error: "You have already applied to this job" }, { status: 409 });
     }
@@ -140,7 +141,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ applications });
   } catch (error) {
-    console.error('Get applications error:', error);
+    logger.error('Get applications error:', error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

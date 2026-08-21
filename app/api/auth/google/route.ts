@@ -3,6 +3,7 @@ import { signToken, signRefreshToken, setAuthCookies, logAuthEvent } from "@/lib
 import connectDB from "@/lib/mongodb";
 import { User } from "@/models";
 import { generateSecureToken } from "@/lib/auth-utils";
+import { logger } from "@/lib/logger";
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
@@ -77,7 +78,7 @@ export async function POST(request: NextRequest) {
 
     if (!tokenResponse.ok) {
       const error = await tokenResponse.text();
-      console.error('Google token exchange error:', error);
+      logger.error('Google token exchange error:', error);
       return NextResponse.json({ error: "Failed to exchange authorization code" }, { status: 400 });
     }
 
@@ -179,7 +180,7 @@ export async function POST(request: NextRequest) {
 
     return response;
   } catch (error) {
-    console.error('Google OAuth error:', error);
+    logger.error('Google OAuth error:', error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

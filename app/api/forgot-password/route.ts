@@ -5,6 +5,7 @@ import { logAuthEvent } from "@/lib/auth";
 import { passwordResetRateLimit } from "@/lib/rate-limit";
 import { generatePasswordResetToken, isValidEmail } from "@/lib/auth-utils";
 import { sendPasswordResetEmail } from "@/lib/email-service";
+import { logger } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   try {
@@ -61,7 +62,7 @@ export async function POST(request: NextRequest) {
       emailSent 
     });
   } catch (error) {
-    console.error('Forgot password error:', error);
+    logger.error('Forgot password error:', error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

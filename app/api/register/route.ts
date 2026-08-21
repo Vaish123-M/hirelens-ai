@@ -5,6 +5,7 @@ import { User } from "@/models";
 import { authRateLimit } from "@/lib/rate-limit";
 import { isValidEmail, validatePasswordStrength, generateEmailVerificationToken } from "@/lib/auth-utils";
 import { sendVerificationEmail } from "@/lib/email-service";
+import { logger } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   try {
@@ -84,7 +85,7 @@ export async function POST(request: NextRequest) {
 
     return response;
   } catch (error) {
-    console.error('Registration error:', error);
+    logger.error('Registration error:', error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

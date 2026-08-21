@@ -4,6 +4,7 @@ import { IUser, UserRole } from "@/models";
 import { AuditLog } from "@/models";
 import connectDB from "./mongodb";
 import { generateAuditMetadata } from "./auth-utils";
+import { logger } from "./logger";
 
 export const SESSION_COOKIE = "hirelens_session";
 export const REFRESH_COOKIE = "hirelens_refresh";
@@ -135,6 +136,6 @@ export async function logAuthEvent(
       },
     });
   } catch (error) {
-    console.error('Error logging auth event:', error);
+    logger.error('Error logging auth event:', error);
   }
 }

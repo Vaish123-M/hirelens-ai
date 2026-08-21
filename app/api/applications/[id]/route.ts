@@ -3,6 +3,7 @@ import { getSessionFromRequest } from "@/lib/auth";
 import connectDB from "@/lib/mongodb";
 import { Application } from "@/models";
 import { AuditLog } from "@/models";
+import { logger } from "@/lib/logger";
 
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -62,7 +63,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 
     return NextResponse.json({ application: populatedApplication });
   } catch (error) {
-    console.error('Update application error:', error);
+    logger.error('Update application error:', error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

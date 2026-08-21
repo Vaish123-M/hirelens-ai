@@ -3,6 +3,7 @@ import connectDB from "@/lib/mongodb";
 import { User } from "@/models";
 import { logAuthEvent } from "@/lib/auth";
 import { validatePasswordStrength } from "@/lib/auth-utils";
+import { logger } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   try {
@@ -49,7 +50,7 @@ export async function POST(request: NextRequest) {
       success: true 
     });
   } catch (error) {
-    console.error('Reset password error:', error);
+    logger.error('Reset password error:', error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -82,7 +83,7 @@ export async function GET(request: NextRequest) {
       message: "Reset token is valid" 
     });
   } catch (error) {
-    console.error('Validate reset token error:', error);
+    logger.error('Validate reset token error:', error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

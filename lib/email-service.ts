@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import { logger } from './logger';
 
 interface EmailOptions {
   to: string;
@@ -33,7 +34,7 @@ function createTransporter() {
   
   // For development, use ethereal.email or return null
   if (process.env.NODE_ENV === 'development') {
-    console.log('Email service not configured. Running in development mode.');
+    logger.info('Email service not configured. Running in development mode.');
     return null;
   }
   
@@ -46,11 +47,11 @@ export async function sendEmail(options: EmailOptions): Promise<boolean> {
     
     if (!transporter) {
       // Development mode - log email instead
-      console.log('--- EMAIL (Development Mode) ---');
-      console.log(`To: ${options.to}`);
-      console.log(`Subject: ${options.subject}`);
-      console.log(`HTML: ${options.html}`);
-      console.log('--- END EMAIL ---');
+      logger.info('--- EMAIL (Development Mode) ---');
+      logger.info(`To: ${options.to}`);
+      logger.info(`Subject: ${options.subject}`);
+      logger.info(`HTML: ${options.html}`);
+      logger.info('--- END EMAIL ---');
       return true;
     }
     
@@ -62,10 +63,10 @@ export async function sendEmail(options: EmailOptions): Promise<boolean> {
       text: options.text,
     });
     
-    console.log('Email sent:', info.messageId);
+    logger.info('Email sent:', info.messageId);
     return true;
   } catch (error) {
-    console.error('Error sending email:', error);
+    logger.error('Error sending email:', error);
     return false;
   }
 }

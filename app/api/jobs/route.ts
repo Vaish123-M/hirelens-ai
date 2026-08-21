@@ -3,6 +3,7 @@ import { getSessionFromRequest } from "@/lib/auth";
 import connectDB from "@/lib/mongodb";
 import { Job, Company, User } from "@/models";
 import { AuditLog } from "@/models";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
   try {
@@ -25,7 +26,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ jobs });
   } catch (error) {
-    console.error('Get jobs error:', error);
+    logger.error('Get jobs error:', error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -108,7 +109,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ job: populatedJob }, { status: 201 });
   } catch (error) {
-    console.error('Create job error:', error);
+    logger.error('Create job error:', error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

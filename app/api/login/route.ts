@@ -4,6 +4,7 @@ import connectDB from "@/lib/mongodb";
 import { User } from "@/models";
 import { authRateLimit } from "@/lib/rate-limit";
 import { getClientIp, isValidEmail } from "@/lib/auth-utils";
+import { logger } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   try {
@@ -100,7 +101,7 @@ export async function POST(request: NextRequest) {
 
     return response;
   } catch (error) {
-    console.error('Login error:', error);
+    logger.error('Login error:', error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

@@ -3,6 +3,7 @@ import connectDB from "@/lib/mongodb";
 import { User } from "@/models";
 import { logAuthEvent } from "@/lib/auth";
 import { emailVerificationRateLimit } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   try {
@@ -55,7 +56,7 @@ export async function POST(request: NextRequest) {
       emailSent 
     });
   } catch (error) {
-    console.error('Send verification email error:', error);
+    logger.error('Send verification email error:', error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -91,7 +92,7 @@ export async function GET(request: NextRequest) {
       verified: true 
     });
   } catch (error) {
-    console.error('Verify email error:', error);
+    logger.error('Verify email error:', error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

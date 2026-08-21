@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSessionFromRequest, getUserFromSession, getRefreshSessionFromRequest, signToken, setAuthCookies } from "@/lib/auth";
 import connectDB from "@/lib/mongodb";
 import { User } from "@/models";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
   try {
@@ -32,7 +33,7 @@ export async function GET(request: NextRequest) {
       } 
     });
   } catch (error) {
-    console.error('Get user error:', error);
+    logger.error('Get user error:', error);
     return NextResponse.json({ user: null }, { status: 500 });
   }
 }
@@ -77,7 +78,7 @@ export async function POST(request: NextRequest) {
 
     return response;
   } catch (error) {
-    console.error('Refresh token error:', error);
+    logger.error('Refresh token error:', error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
